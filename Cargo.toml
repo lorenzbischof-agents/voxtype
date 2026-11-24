@@ -108,10 +108,9 @@ rustfft = { version = "6", optional = true }
 
 # OpenVINO GenAI backend (Intel NPU/CPU/GPU via OpenVINO GenAI WhisperPipeline)
 # `runtime-linking` loads libopenvino_genai.so at runtime via openvino-finder.
-# See the [patch.crates-io] entry below: pinned to a fork branch that adds
-# with_properties() to WhisperPipeline (needed for CACHE_DIR compiled-model
-# caching), pending upstream review.
-openvino-genai = { version = "0.11.0", optional = true, features = ["runtime-linking"] }
+# 0.11.1 is the first release with WhisperPipeline::with_properties(), which
+# the CACHE_DIR compiled-model caching needs (intel/openvino-rs#196).
+openvino-genai = { version = "0.11.1", optional = true, features = ["runtime-linking"] }
 
 # CPU count for thread detection
 num_cpus = "1.16"
@@ -390,15 +389,3 @@ path = "src/bin/voxtype_mirror_registry.rs"
 [[example]]
 name = "inspect_cohere_onnx"
 required-features = ["cohere"]
-
-# TEMPORARY: openvino-genai 0.11.0's WhisperPipeline has no way to pass
-# device properties (CACHE_DIR etc.), unlike LlmPipeline/VlmPipeline in
-# the same crate which already expose with_properties(). Pinned to a
-# voxtype-org mirror of the fork branch that adds the same method for
-# Whisper (upstream review pending at
-# https://github.com/intel/openvino-rs/pull/196); mirrored so source
-# builds don't depend on an individual's fork staying available.
-# Drop this patch (and bump the openvino-genai version requirement above
-# if needed) once that PR merges and ships in a crates.io release.
-[patch.crates-io]
-openvino-genai = { git = "https://github.com/voxtype/openvino-rs", branch = "whisper-pipeline-with-properties" }
